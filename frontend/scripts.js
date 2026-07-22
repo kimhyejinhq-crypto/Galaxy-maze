@@ -600,7 +600,10 @@ function openChoiceModal(title, desc, buttons) {
 function renderShop(state) {
   const me = findPlayer(state, myPlayerId);
   const isMe = state.players[state.current_player_index].id === myPlayerId;
-  if (!isMe) { $("#modal-shop").classList.add("hidden"); return; }
+  if (!isMe) {
+    $("#modal-shop").classList.add("hidden");
+    return;
+  }
 
   const wrap = $("#shop-items");
   wrap.innerHTML = "";
@@ -618,18 +621,33 @@ function renderShop(state) {
     btn.textContent = "MUA";
     btn.disabled = !canBuy;
     btn.addEventListener("click", () => {
-      console.log("Mua item:", key);
-      socket.emit("buy_item", { room_code: myRoomCode, player_id: myPlayerId, item_type: key });
+      console.log(`[Shop] Mua: ${key}`);
+      socket.emit("buy_item", {
+        room_code: myRoomCode,
+        player_id: myPlayerId,
+        item_type: key
+      });
     });
     row.appendChild(btn);
     wrap.appendChild(row);
   });
 
-  // Đảm bảo nút skip xuất hiện
-  $("#btn-skip-shop").classList.remove("hidden");
+  // Đảm bảo nút skip luôn hiển thị và gắn sự kiện trực tiếp
+  const skipBtn = $("#btn-skip-shop");
+  skipBtn.classList.remove("hidden");
+  // Gỡ bỏ listener cũ để tránh trùng
+  skipBtn.replaceWith(skipBtn.cloneNode(true));
+  const newSkipBtn = $("#btn-skip-shop");
+  newSkipBtn.addEventListener("click", () => {
+    console.log("[Shop] Skip");
+    socket.emit("skip_shop", {
+      room_code: myRoomCode,
+      player_id: myPlayerId
+    });
+  });
+
   $("#modal-shop").classList.remove("hidden");
 }
-
 // Thêm hàm skip toàn cục
 window.skipShop = function() {
   console.log("Skip shop");
