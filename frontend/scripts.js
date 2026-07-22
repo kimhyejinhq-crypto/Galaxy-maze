@@ -578,6 +578,7 @@ function openChoiceModal(title, desc, buttons) {
 // =====================================================================
 // CỬA HÀNG CỦA GÃ HỀ
 // =====================================================================
+// Thay thế toàn bộ hàm renderShop
 function renderShop(state) {
   const me = findPlayer(state, myPlayerId);
   const isMe = state.players[state.current_player_index].id === myPlayerId;
@@ -598,15 +599,24 @@ function renderShop(state) {
     const btn = document.createElement("button");
     btn.textContent = "MUA";
     btn.disabled = !canBuy;
-    btn.addEventListener("click", () => socket.emit("buy_item", { room_code: myRoomCode, player_id: myPlayerId, item_type: key }));
+    btn.addEventListener("click", () => {
+      console.log("Mua item:", key);
+      socket.emit("buy_item", { room_code: myRoomCode, player_id: myPlayerId, item_type: key });
+    });
     row.appendChild(btn);
     wrap.appendChild(row);
   });
+
+  // Đảm bảo nút skip xuất hiện
+  $("#btn-skip-shop").classList.remove("hidden");
   $("#modal-shop").classList.remove("hidden");
 }
-$("#btn-skip-shop").addEventListener("click", () => {
+
+// Thêm hàm skip toàn cục
+window.skipShop = function() {
+  console.log("Skip shop");
   socket.emit("skip_shop", { room_code: myRoomCode, player_id: myPlayerId });
-});
+};
 
 // =====================================================================
 // MODAL HÀNH ĐỘNG CHỜ (ngã ba / bài sự kiện cần chọn mục tiêu, ô...)
