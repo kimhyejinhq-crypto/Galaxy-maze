@@ -209,4 +209,7 @@ def on_use_item(data):
 
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True, allow_unsafe_werkzeug=True)
+    # Chạy debug chỉ khi môi trường là development
+    import os
+    debug = os.environ.get("FLASK_DEBUG", "False").lower() == "true"
+    socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=debug, allow_unsafe_werkzeug=True)
