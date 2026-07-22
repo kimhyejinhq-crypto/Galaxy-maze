@@ -78,21 +78,31 @@ def create_room():
 def join_room_route():
     data = request.get_json(force=True) or {}
     try:
-        state = engine.join_room(data.get("room_code", ""), data.get("name", ""), data.get("character", ""))
+        # CHUẨN HÓA: strip + upper
+        room_code = data.get("room_code", "").strip().upper()
+        if not room_code:
+            raise GameError("Mã phòng không được để trống")
+        name = data.get("name", "").strip()
+        character = data.get("character", "").strip()
+        if not name or not character:
+            raise GameError("Tên và nhân vật là bắt buộc")
+        state = engine.join_room(room_code, name, character)
         _broadcast(state.room_code.upper(), state, "lobby_update")
         return _ok(state)
     except GameError as e:
+        # In lỗi ra log để biết nguyên nhân cụ thể
+        print(f"[ERROR] /api/join_room: {e}")
         return _err(e)
-
 
 @app.route("/api/state/<room_code>", methods=["GET"])
 def get_state(room_code):
     try:
+        room_code = room_code.strip().upper()
         state = engine.get_state(room_code)
         return _ok(state)
     except GameError as e:
+        print(f"[ERROR] /api/state: {e}")
         return _err(e)
-
 
 @app.route("/api/characters", methods=["GET"])
 def characters():
