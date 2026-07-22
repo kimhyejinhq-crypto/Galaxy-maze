@@ -187,20 +187,23 @@ def on_resolve_pending(data):
 @socketio.on("buy_item")
 def on_buy_item(data):
     room_code = (data.get("room_code") or "").upper()
+    print(f"[buy_item] room={room_code}, data={data}")   # Thêm dòng này
     try:
         state = engine.buy_item(room_code, data.get("player_id"), data.get("item_type"))
         _broadcast(room_code, state)
     except GameError as e:
+        print(f"[buy_item] ERROR: {e}")                  # Thêm dòng này
         emit("action_error", {"error": str(e)})
-
 
 @socketio.on("skip_shop")
 def on_skip_shop(data):
     room_code = (data.get("room_code") or "").upper()
+    print(f"[skip_shop] room={room_code}, data={data}") # Thêm dòng này
     try:
         state = engine.skip_shop(room_code, data.get("player_id"))
         _broadcast(room_code, state)
     except GameError as e:
+        print(f"[skip_shop] ERROR: {e}")                # Thêm dòng này
         emit("action_error", {"error": str(e)})
 
 
