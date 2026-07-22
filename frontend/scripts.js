@@ -487,25 +487,26 @@ function updateCamera(state) {
   const rect = frame.getBoundingClientRect();
   const camera = $("#board-camera");
 
-  const boardWidth = 2200;
+  const boardWidth = 2200;   // kích thước bàn cờ đã định trong CSS
   const boardHeight = 1400;
 
   if (cameraMode === 'follow') {
-    // Chế độ theo nhân vật (cũ)
     const c = tileCenter(cur.position);
     const tx = rect.width / 2 - c.x;
     const ty = rect.height / 2 - c.y;
     camera.style.transform = `translate(${tx}px, ${ty}px) scale(1)`;
+    camera.style.transition = 'transform 0.9s cubic-bezier(.22,.9,.35,1)';
   } else {
-    // Chế độ toàn cảnh – thu nhỏ vừa đủ để thấy toàn bộ board
+    // Chế độ toàn cảnh – thu nhỏ để thấy toàn bộ
     const scaleX = rect.width / boardWidth;
     const scaleY = rect.height / boardHeight;
-    const scale = Math.min(scaleX, scaleY, 1.0); // không phóng to quá 1
+    const scale = Math.min(scaleX, scaleY, 0.9); // không quá 0.9 để thấy viền
     const cx = boardWidth / 2;
     const cy = boardHeight / 2;
     const tx = rect.width / 2 - cx * scale;
     const ty = rect.height / 2 - cy * scale;
     camera.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    camera.style.transition = 'transform 0.7s ease';
   }
 }
 window.addEventListener("resize", () => { if (latestState) updateCamera(latestState); });
