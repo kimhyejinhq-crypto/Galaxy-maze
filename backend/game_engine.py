@@ -288,7 +288,7 @@ class GameEngine:
                     "player_id": player.id,
                 }
                 self._push_event(state, "branch", f"{player.name} gặp ngã ba không gian, phải chọn hướng!",
-                                  data={"options": conns, "player_id": player.id})
+                                  data={"options": conns, "player_id": player.id, "path": list(pm["path"])})
                 return
             player.position = conns[0]
             pm["path"].append(player.position)
@@ -296,6 +296,8 @@ class GameEngine:
             if player.position >= FINISH_TILE:
                 pm["remaining_steps"] = 0
                 break
+        self._push_event(state, "move_path", f"{player.name} di chuyển.",
+                          data={"player_id": player.id, "path": list(pm["path"])})
         state.pending_move = None
         self._land_on_tile(state, player)
 
