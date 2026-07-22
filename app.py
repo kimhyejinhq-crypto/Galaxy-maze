@@ -209,7 +209,14 @@ def on_use_item(data):
 
 
 if __name__ == "__main__":
-    # Chạy debug chỉ khi môi trường là development
     import os
-    debug = os.environ.get("FLASK_DEBUG", "False").lower() == "true"
-    socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=debug, allow_unsafe_werkzeug=True)
+    # Lấy cổng từ môi trường (Render sẽ set PORT), mặc định 5000
+    port = int(os.environ.get("PORT", 5000))
+    # Chế độ debug chỉ bật khi chạy local (FLASK_DEBUG=true hoặc không có biến PORT)
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    # Với production, dùng gunicorn (không chạy socketio.run), còn local vẫn dùng socketio.run
+    if os.environ.get("RENDER"):  # nếu deploy trên Render, dùng gunicorn
+        # Gunicorn sẽ chạy app thay vì socketio.run, nên không cần gì thêm
+        print("Running in production mode (gunicorn).")
+    else:
+        socketio.run(app, host="0.0.0.0", port=port, debug=debug, allow_unsafe_werkzeug=True)
