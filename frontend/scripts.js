@@ -335,7 +335,7 @@ function renderLog(state) {
 // BÀN CỜ MÊ CUNG + CAMERA THEO NGƯỜI CHƠI + TOKEN DI CHUYỂN TỪNG BƯỚC
 // =====================================================================
 function computeTilePositions(board) {
-  const colW = 200, rowH = 130, padX = 100, padY = 100;
+  const colW = 240, rowH = 160, padX = 100, padY = 100;
   const pos = {};
   board.forEach(tile => {
     const i = tile.index;
