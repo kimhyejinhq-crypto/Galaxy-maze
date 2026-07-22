@@ -78,7 +78,6 @@ def create_room():
 def join_room_route():
     data = request.get_json(force=True) or {}
     try:
-        # CHUẨN HÓA: strip + upper
         room_code = data.get("room_code", "").strip().upper()
         if not room_code:
             raise GameError("Mã phòng không được để trống")
@@ -86,11 +85,16 @@ def join_room_route():
         character = data.get("character", "").strip()
         if not name or not character:
             raise GameError("Tên và nhân vật là bắt buộc")
+
+        # --- KIỂM TRA PHÒNG TỒN TẠI TRƯỚC (đây là bước sửa) ---
+        if room_code not in engine.rooms:
+            print(f"[ERROR] Phòng {room_code} không tồn tại. Danh sách phòng: {list(engine.rooms.keys())}")
+            return jsonify({"success": False, "error": f"Phòng {room_code} không tìm thấy."}), 404
+
         state = engine.join_room(room_code, name, character)
         _broadcast(state.room_code.upper(), state, "lobby_update")
         return _ok(state)
     except GameError as e:
-        # In lỗi ra log để biết nguyên nhân cụ thể
         print(f"[ERROR] /api/join_room: {e}")
         return _err(e)
 
