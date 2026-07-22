@@ -881,6 +881,15 @@ function processCardQueue() {
   $("#tarot-desc").textContent = "";
   modal.classList.remove("hidden");
 
+  // Sau dòng modal.classList.remove("hidden");
+  modal.onclick = function() {
+    modal.classList.add("hidden");
+    cardAnimating = false;
+    if (latestState) renderPendingModals(latestState);
+    processCardQueue();
+    modal.onclick = null;
+  };
+  
   setTimeout(() => {
     const card = ev.data && ev.data.card;
     $("#tarot-name").textContent = card ? card.name : (isTrap ? "Bài Bẫy" : "Bài Sự Kiện");
@@ -894,7 +903,7 @@ function processCardQueue() {
     // sau khi lật xong, nếu đang có pending_action cần người này chọn -> hiện modal chọn
     if (latestState) renderPendingModals(latestState);
     processCardQueue();
-  }, 2200);
+  }, 5000);
 }
 
 $("#btn-toggle-camera").addEventListener("click", () => {
