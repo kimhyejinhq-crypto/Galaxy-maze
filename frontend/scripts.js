@@ -895,3 +895,9 @@ function processCardQueue() {
     processCardQueue();
   }, 2200);
 }
+
+$("#btn-toggle-camera").addEventListener("click", () => {
+  cameraMode = (cameraMode === 'follow') ? 'full' : 'follow';
+  $("#btn-toggle-camera").textContent = cameraMode === 'follow' ? '🌌 TOÀN CẢNH' : '🎯 THEO NHÂN VẬT';
+  if (latestState) updateCamera(latestState);
+});
