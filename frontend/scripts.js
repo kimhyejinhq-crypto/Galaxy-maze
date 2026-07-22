@@ -485,11 +485,28 @@ function updateCamera(state) {
   if (!cur) return;
   const frame = $(".viewport-frame");
   const rect = frame.getBoundingClientRect();
-  const c = tileCenter(cur.position);
   const camera = $("#board-camera");
-  const tx = rect.width / 2 - c.x;
-  const ty = rect.height / 2 - c.y;
-  camera.style.transform = `translate(${tx}px, ${ty}px)`;
+
+  const boardWidth = 2200;
+  const boardHeight = 1400;
+
+  if (cameraMode === 'follow') {
+    // Chế độ theo nhân vật (cũ)
+    const c = tileCenter(cur.position);
+    const tx = rect.width / 2 - c.x;
+    const ty = rect.height / 2 - c.y;
+    camera.style.transform = `translate(${tx}px, ${ty}px) scale(1)`;
+  } else {
+    // Chế độ toàn cảnh – thu nhỏ vừa đủ để thấy toàn bộ board
+    const scaleX = rect.width / boardWidth;
+    const scaleY = rect.height / boardHeight;
+    const scale = Math.min(scaleX, scaleY, 1.0); // không phóng to quá 1
+    const cx = boardWidth / 2;
+    const cy = boardHeight / 2;
+    const tx = rect.width / 2 - cx * scale;
+    const ty = rect.height / 2 - cy * scale;
+    camera.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  }
 }
 window.addEventListener("resize", () => { if (latestState) updateCamera(latestState); });
 
