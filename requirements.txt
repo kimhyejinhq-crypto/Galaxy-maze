@@ -1,5 +1,0 @@
-Flask
-gunicorn
-flask-cors
-flask-socketio
-redis
